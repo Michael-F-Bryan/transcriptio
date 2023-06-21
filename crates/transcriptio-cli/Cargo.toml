@@ -1,0 +1,22 @@
+[package]
+name = "transcriptio-cli"
+description = "The transcriptio CLI"
+authors.workspace = true
+edition.workspace = true
+homepage.workspace = true
+license.workspace = true
+readme.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+version.workspace = true
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+anyhow = "1.0.71"
+clap = { version = "4.3.5", features = ["env", "derive"] }
+
+[[bin]]
+name = "transcriptio"
+path = "src/bin/transcriptio.rs"
+doc = false

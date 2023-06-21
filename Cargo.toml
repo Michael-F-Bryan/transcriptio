@@ -1,5 +1,9 @@
 [workspace]
-members = ["crates/*"]
+members = [
+    "crates/transcriptio",
+    "crates/transcriptio-cli",
+    "crates/xtask",
+]
 
 [workspace.package]
 authors = ["Michael-F-Bryan <michaelfbryan@gmail.com>"]

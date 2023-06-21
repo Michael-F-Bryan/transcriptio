@@ -15,4 +15,4 @@ rust-version.workspace = true
 anyhow = "1"
 clap = { version = "4", features = ["derive", "env"] }
 once_cell = "1.18.0"
-zip = "0.6.6"
+zip = { version = "0.6.6", default-features = false, features = ["deflate"] }

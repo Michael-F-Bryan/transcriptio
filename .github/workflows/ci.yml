@@ -72,10 +72,10 @@ jobs:
           command: fmt
           args: --all --verbose --check
       - name: Clippy
-        uses: actions-rs/clippy-check@v1
+        uses: actions-rs/cargo@v1
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          args: --workspace --verbose
+          command: clippy
+          args: --workspace --verbose --locked -- -Dwarnings
 
   api-docs:
     name: Publish API Docs to GitHub Pages

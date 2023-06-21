@@ -3,6 +3,7 @@ members = [
     "crates/transcriptio",
     "crates/transcriptio-cli",
     "crates/xtask",
+    "integration-tests",
 ]
 
 [workspace.package]

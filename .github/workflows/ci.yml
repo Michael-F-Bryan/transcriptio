@@ -9,6 +9,8 @@ on:
 env:
   DEFAULT_CRATE_NAME: transcriptio
 
+permissions:
+  contents: write
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}

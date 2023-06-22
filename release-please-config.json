@@ -2,10 +2,12 @@
   "packages": {
     "crates/transcriptio": {
       "release-type": "rust",
+      "changelog-path": "CHANGELOG.md",
       "component": "transcriptio"
     },
     "crates/transcriptio-cli": {
       "release-type": "rust",
+      "changelog-path": "CHANGELOG.md",
       "component": "transcriptio-cli"
     }
   },

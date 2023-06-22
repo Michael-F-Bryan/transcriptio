@@ -1,29 +1,20 @@
 {
+  "plugins": [
+    "cargo-workspace"
+  ],
+  "release-type": "rust",
   "packages": {
-    "crates/transcriptio": {
-      "release-type": "rust",
-      "changelog-path": "../../CHANGELOG.md",
-      "component": "transcriptio"
-    },
-    "crates/transcriptio-cli": {
-      "release-type": "rust",
-      "changelog-path": "../../CHANGELOG.md",
-      "component": "transcriptio-cli"
+    "crates/transcriptio": {},
+    "crates/transcriptio-cli": {},
+    ".": {
+      "releaseType": "rust",
+      "packageName": "transcriptio",
+      "draft": false,
+      "bumpMinorPreMajor": false,
+      "bumpPatchForMinorPreMajor": false,
+      "changelogPath": "CHANGELOG.md",
+      "versioning": "default"
     }
   },
-  "plugins": [
-    {
-      "type": "cargo-workspace",
-      "merge": true
-    },
-    {
-      "type": "linked-versions",
-      "groupName": "core",
-      "components": [
-        "transcriptio",
-        "transcriptio-cli"
-      ]
-    }
-  ],
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json"
 }

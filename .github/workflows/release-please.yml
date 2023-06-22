@@ -26,8 +26,8 @@ jobs:
       - uses: google-github-actions/release-please-action@v3
         id: release
         with:
+          command: release-pr
           release-type: rust
-          package-name: transcriptio-cli
           bootstrap-sha: 70b721a4f53a81bab1c2c03b6210ce2f72fc3d0c
           plugins: cargo-workspace
 

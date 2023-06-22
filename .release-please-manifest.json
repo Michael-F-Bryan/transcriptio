@@ -1,3 +1,4 @@
 {
-  ".": "0.0.0"
+  "crates/transcriptio": "0.0.0",
+  "crates/transcriptio-cli": "0.0.0"
 }

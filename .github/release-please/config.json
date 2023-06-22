@@ -1,11 +1,12 @@
 {
-  "plugins": [
-    "cargo-workspace"
-  ],
   "release-type": "rust",
   "packages": {
-    "crates/transcriptio": {},
-    "crates/transcriptio-cli": {},
+    "crates/transcriptio": {
+      "component": "transcriptio"
+    },
+    "crates/transcriptio-cli": {
+      "component": "transcriptio-cli"
+    },
     ".": {
       "releaseType": "rust",
       "packageName": "transcriptio",
@@ -16,5 +17,19 @@
       "versioning": "default"
     }
   },
+  "plugins": [
+    {
+      "type": "cargo-workspace",
+      "merge": false
+    },
+    {
+      "type": "linked-versions",
+      "groupName": "core",
+      "components": [
+        "transcriptio",
+        "transcriptio-cli"
+      ]
+    }
+  ],
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json"
 }

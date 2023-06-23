@@ -13,3 +13,5 @@ rust-version.workspace = true
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+m_lexer = "0.0.4"
+rowan = "0.15.11"

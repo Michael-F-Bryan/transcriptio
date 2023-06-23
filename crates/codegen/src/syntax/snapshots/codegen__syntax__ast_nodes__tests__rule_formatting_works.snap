@@ -1,0 +1,19 @@
+---
+source: crates/codegen/src/syntax/ast_nodes.rs
+expression: "&formatted"
+---
+SourceFile = Item*
+Item = UseItem | ResourceItem
+UseItem = 'use' UseNames 'from' 'path'
+ResourceItem = Attributes 'resource' name:'ident' ('{' ResourceDefs '}')?
+UseNames = '*' | UseNamesList
+UseNamesList = '{' (UseNamesItem ',')* '}'
+UseNamesItem = name:'ident' ('as' rename:'ident')?
+Attributes = Attribute*
+ResourceDefs = ResourceDef*
+ResourceDef = Attributes 'static'? Func
+Func = name:'ident' ':' 'func' '(' FuncArgs ')' ('->' Ty)?
+Attribute = 'doc-comment'
+FuncArgs = (FuncArg ',')*
+Ty = 'ident'
+FuncArg = name:'ident' ':' Ty

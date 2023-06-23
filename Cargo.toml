@@ -1,8 +1,6 @@
 [workspace]
 members = [
-    "crates/transcriptio",
-    "crates/transcriptio-cli",
-    "crates/xtask",
+    "crates/*",
     "integration-tests",
 ]
 

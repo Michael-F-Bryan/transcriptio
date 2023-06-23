@@ -1,0 +1,19 @@
+SourceFile = Magic HeaderItems* Items*
+
+Magic = 'WEBVTT'
+
+HeaderItems = RegionDefinition | Style | CommentBlock
+
+Items = Cue | CommentBlock
+
+CommentBlock = 'NOTE' 'comment'
+
+RegionDefinition = 'REGION'
+
+Style = 'STYLE'
+
+Cue = 'identifier'? Timings CuePayload
+
+Timings = 'timestamp' '-->' 'timestamp'
+
+CuePayload = 'payload'

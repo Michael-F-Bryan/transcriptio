@@ -15,6 +15,8 @@ rust-version.workspace = true
 [dependencies]
 anyhow = "1.0.71"
 clap = { version = "4.3.5", features = ["env", "derive"] }
+tracing = "0.1.37"
+tracing-subscriber = { version = "0.3.17", features = ["env-filter"] }
 
 [[bin]]
 name = "transcriptio"

@@ -22,7 +22,10 @@ mod tests {
 
     #[test]
     fn update_syntax_kind() {
-        let grammar: Grammar = include_str!("../../../webvtt.ungram").parse().unwrap();
+        let grammar: Grammar = include_str!("../../../webvtt.ungram")
+            .replace("\r\n", "\n")
+            .parse()
+            .unwrap();
 
         let syntax_kind = SyntaxKind::new(&grammar);
 

@@ -5,7 +5,7 @@
       "component": "transcriptio"
     },
     "crates/transcriptio-cli": {
-      "component": "transcriptio-cli"
+      "component": "cli"
     }
   },
   "plugins": [

@@ -209,12 +209,6 @@ impl SyntaxKind {
                     k as u16
                 }
             }
-
-            impl From<SyntaxKind> for m_lexer::TokenKind {
-                fn from(k: SyntaxKind) -> m_lexer::TokenKind {
-                    m_lexer::TokenKind(k.into())
-                }
-            }
         }
     }
 }

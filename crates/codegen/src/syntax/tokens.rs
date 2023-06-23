@@ -42,7 +42,7 @@ pub(crate) fn all_tokens(grammar: &Grammar) -> Vec<Token> {
     tokens
 }
 
-const PUNCTUATION_NAMES: &[(&str, &str)] = &[("-->", "ARROW")];
+const PUNCTUATION_NAMES: &[(&str, &str)] = &[("-->", "ARROW"), (":", "COLON"), (".", "DOT")];
 
 #[derive(Debug, Clone)]
 pub struct Token {
@@ -75,21 +75,21 @@ fn special_tokens() -> Vec<Token> {
             kind: TokenKind::Special,
         },
         Token {
-            docs: "One or more whitespace characters (spaces, tabs, newlines, etc.).".to_string(),
+            docs: "One or more whitespace characters (spaces, tabs, etc.).".to_string(),
             syntax_kind: format_ident!("WHITESPACE"),
             token: None,
             kind: TokenKind::Special,
         },
         Token {
-            docs: "A timestamp literal.".to_string(),
-            syntax_kind: format_ident!("TIMESTAMP"),
-            token: Some("timestamp".to_string()),
-            kind: TokenKind::Literal,
+            docs: "The newline character".to_string(),
+            syntax_kind: format_ident!("NEWLINE"),
+            token: Some("newline".to_string()),
+            kind: TokenKind::Special,
         },
         Token {
-            docs: "A comment.".to_string(),
-            syntax_kind: format_ident!("COMMENT"),
-            token: Some("comment".to_string()),
+            docs: "A line of text.".to_string(),
+            syntax_kind: format_ident!("LINE"),
+            token: Some("line".to_string()),
             kind: TokenKind::Literal,
         },
     ]

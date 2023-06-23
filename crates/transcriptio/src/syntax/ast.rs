@@ -6,7 +6,7 @@ use crate::syntax::{SyntaxKind, SyntaxNode, SyntaxToken};
 ///
 ///Grammar:
 ///```text
-///SourceFile = Magic HeaderItems* Items*
+///SourceFile = Magic 'newline' (HeaderItems 'newline')* (Items 'newline')*
 ///```
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct SourceFile(SyntaxNode);
@@ -31,6 +31,9 @@ impl AstNode for SourceFile {
 impl SourceFile {
     pub fn magic(&self) -> Option<Magic> {
         self.0.children().find_map(Magic::cast)
+    }
+    pub fn newlines(&self) -> impl Iterator<Item = NewlineToken> {
+        self.0.children().filter_map(NewlineToken::cast)
     }
     pub fn header_items(&self) -> impl Iterator<Item = HeaderItems> {
         self.0.children().filter_map(HeaderItems::cast)
@@ -289,7 +292,7 @@ impl Style {
 ///
 ///Grammar:
 ///```text
-///CommentBlock = 'NOTE' 'comment'
+///CommentBlock = 'NOTE' ('line' 'newline')*
 ///```
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct CommentBlock(SyntaxNode);
@@ -315,8 +318,11 @@ impl CommentBlock {
     pub fn note_kw(&self) -> Option<NoteKwToken> {
         self.0.children().find_map(NoteKwToken::cast)
     }
-    pub fn comment(&self) -> Option<CommentToken> {
-        self.0.children().find_map(CommentToken::cast)
+    pub fn lines(&self) -> impl Iterator<Item = LineToken> {
+        self.0.children().filter_map(LineToken::cast)
+    }
+    pub fn newlines(&self) -> impl Iterator<Item = NewlineToken> {
+        self.0.children().filter_map(NewlineToken::cast)
     }
     pub fn span(&self) -> TextRange {
         self.syntax().text_range()
@@ -326,7 +332,7 @@ impl CommentBlock {
 ///
 ///Grammar:
 ///```text
-///Cue = 'identifier'? Timings CuePayload
+///Cue = ('identifier' 'newline')? Timings 'newline' CuePayload
 ///```
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct Cue(SyntaxNode);
@@ -352,6 +358,9 @@ impl Cue {
     pub fn identifier_kw_opt(&self) -> Option<IdentifierKwToken> {
         self.0.children().find_map(IdentifierKwToken::cast)
     }
+    pub fn newlines(&self) -> impl Iterator<Item = NewlineToken> {
+        self.0.children().filter_map(NewlineToken::cast)
+    }
     pub fn timings(&self) -> Option<Timings> {
         self.0.children().find_map(Timings::cast)
     }
@@ -366,7 +375,7 @@ impl Cue {
 ///
 ///Grammar:
 ///```text
-///Timings = 'timestamp' '-->' 'timestamp'
+///Timings = Timestamp '-->' Timestamp
 ///```
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct Timings(SyntaxNode);
@@ -389,8 +398,8 @@ impl AstNode for Timings {
     }
 }
 impl Timings {
-    pub fn timestamps(&self) -> impl Iterator<Item = TimestampToken> {
-        self.0.children().filter_map(TimestampToken::cast)
+    pub fn timestamps(&self) -> impl Iterator<Item = Timestamp> {
+        self.0.children().filter_map(Timestamp::cast)
     }
     pub fn arrow(&self) -> Option<ArrowToken> {
         self.0.children().find_map(ArrowToken::cast)
@@ -403,7 +412,7 @@ impl Timings {
 ///
 ///Grammar:
 ///```text
-///CuePayload = 'payload'
+///CuePayload = ('line' 'newline')*
 ///```
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct CuePayload(SyntaxNode);
@@ -426,8 +435,51 @@ impl AstNode for CuePayload {
     }
 }
 impl CuePayload {
-    pub fn payload_kw(&self) -> Option<PayloadKwToken> {
-        self.0.children().find_map(PayloadKwToken::cast)
+    pub fn lines(&self) -> impl Iterator<Item = LineToken> {
+        self.0.children().filter_map(LineToken::cast)
+    }
+    pub fn newlines(&self) -> impl Iterator<Item = NewlineToken> {
+        self.0.children().filter_map(NewlineToken::cast)
+    }
+    pub fn span(&self) -> TextRange {
+        self.syntax().text_range()
+    }
+}
+///A strongly typed wrapper around a [`TIMESTAMP`][SyntaxKind::TIMESTAMP] node.
+///
+///Grammar:
+///```text
+///Timestamp = 'number' ':' 'number' ':' 'number' '.' 'number'
+///```
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct Timestamp(SyntaxNode);
+impl AstNode for Timestamp {
+    type Language = crate::syntax::WebVTT;
+    fn can_cast(kind: SyntaxKind) -> bool
+    where
+        Self: Sized,
+    {
+        kind == SyntaxKind::TIMESTAMP
+    }
+    fn cast(node: SyntaxNode) -> Option<Self>
+    where
+        Self: Sized,
+    {
+        if Timestamp::can_cast(node.kind()) { Some(Timestamp(node)) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.0
+    }
+}
+impl Timestamp {
+    pub fn number_kws(&self) -> impl Iterator<Item = NumberKwToken> {
+        self.0.children().filter_map(NumberKwToken::cast)
+    }
+    pub fn colons(&self) -> impl Iterator<Item = ColonToken> {
+        self.0.children().filter_map(ColonToken::cast)
+    }
+    pub fn dot(&self) -> Option<DotToken> {
+        self.0.children().find_map(DotToken::cast)
     }
     pub fn span(&self) -> TextRange {
         self.syntax().text_range()
@@ -464,32 +516,63 @@ impl AstNode for ArrowToken {
         &self.0
     }
 }
-///The [`SyntaxKind::COMMENT`] token (`comment`).
+///The [`SyntaxKind::COLON`] token (`:`).
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct CommentToken(SyntaxNode);
-impl CommentToken {
+pub struct ColonToken(SyntaxNode);
+impl ColonToken {
     /// Get the underlying [`SyntaxToken`].
     pub fn token(&self) -> SyntaxToken {
         self.0
             .children_with_tokens()
             .filter_map(|element| element.into_token())
-            .find(|token| token.kind() == SyntaxKind::COMMENT)
+            .find(|token| token.kind() == SyntaxKind::COLON)
             .unwrap()
     }
 }
-impl AstNode for CommentToken {
+impl AstNode for ColonToken {
     type Language = crate::syntax::WebVTT;
     fn can_cast(kind: SyntaxKind) -> bool
     where
         Self: Sized,
     {
-        kind == SyntaxKind::COMMENT
+        kind == SyntaxKind::COLON
     }
     fn cast(node: SyntaxNode) -> Option<Self>
     where
         Self: Sized,
     {
-        if CommentToken::can_cast(node.kind()) { Some(CommentToken(node)) } else { None }
+        if ColonToken::can_cast(node.kind()) { Some(ColonToken(node)) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.0
+    }
+}
+///The [`SyntaxKind::DOT`] token (`.`).
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct DotToken(SyntaxNode);
+impl DotToken {
+    /// Get the underlying [`SyntaxToken`].
+    pub fn token(&self) -> SyntaxToken {
+        self.0
+            .children_with_tokens()
+            .filter_map(|element| element.into_token())
+            .find(|token| token.kind() == SyntaxKind::DOT)
+            .unwrap()
+    }
+}
+impl AstNode for DotToken {
+    type Language = crate::syntax::WebVTT;
+    fn can_cast(kind: SyntaxKind) -> bool
+    where
+        Self: Sized,
+    {
+        kind == SyntaxKind::DOT
+    }
+    fn cast(node: SyntaxNode) -> Option<Self>
+    where
+        Self: Sized,
+    {
+        if DotToken::can_cast(node.kind()) { Some(DotToken(node)) } else { None }
     }
     fn syntax(&self) -> &SyntaxNode {
         &self.0
@@ -623,6 +706,68 @@ impl AstNode for IdentifierKwToken {
         &self.0
     }
 }
+///The [`SyntaxKind::LINE`] token (`line`).
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct LineToken(SyntaxNode);
+impl LineToken {
+    /// Get the underlying [`SyntaxToken`].
+    pub fn token(&self) -> SyntaxToken {
+        self.0
+            .children_with_tokens()
+            .filter_map(|element| element.into_token())
+            .find(|token| token.kind() == SyntaxKind::LINE)
+            .unwrap()
+    }
+}
+impl AstNode for LineToken {
+    type Language = crate::syntax::WebVTT;
+    fn can_cast(kind: SyntaxKind) -> bool
+    where
+        Self: Sized,
+    {
+        kind == SyntaxKind::LINE
+    }
+    fn cast(node: SyntaxNode) -> Option<Self>
+    where
+        Self: Sized,
+    {
+        if LineToken::can_cast(node.kind()) { Some(LineToken(node)) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.0
+    }
+}
+///The [`SyntaxKind::NEWLINE`] token (`newline`).
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct NewlineToken(SyntaxNode);
+impl NewlineToken {
+    /// Get the underlying [`SyntaxToken`].
+    pub fn token(&self) -> SyntaxToken {
+        self.0
+            .children_with_tokens()
+            .filter_map(|element| element.into_token())
+            .find(|token| token.kind() == SyntaxKind::NEWLINE)
+            .unwrap()
+    }
+}
+impl AstNode for NewlineToken {
+    type Language = crate::syntax::WebVTT;
+    fn can_cast(kind: SyntaxKind) -> bool
+    where
+        Self: Sized,
+    {
+        kind == SyntaxKind::NEWLINE
+    }
+    fn cast(node: SyntaxNode) -> Option<Self>
+    where
+        Self: Sized,
+    {
+        if NewlineToken::can_cast(node.kind()) { Some(NewlineToken(node)) } else { None }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.0
+    }
+}
 ///The [`SyntaxKind::NOTE_KW`] token (`NOTE`).
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct NoteKwToken(SyntaxNode);
@@ -654,33 +799,33 @@ impl AstNode for NoteKwToken {
         &self.0
     }
 }
-///The [`SyntaxKind::PAYLOAD_KW`] token (`payload`).
+///The [`SyntaxKind::NUMBER_KW`] token (`number`).
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct PayloadKwToken(SyntaxNode);
-impl PayloadKwToken {
+pub struct NumberKwToken(SyntaxNode);
+impl NumberKwToken {
     /// Get the underlying [`SyntaxToken`].
     pub fn token(&self) -> SyntaxToken {
         self.0
             .children_with_tokens()
             .filter_map(|element| element.into_token())
-            .find(|token| token.kind() == SyntaxKind::PAYLOAD_KW)
+            .find(|token| token.kind() == SyntaxKind::NUMBER_KW)
             .unwrap()
     }
 }
-impl AstNode for PayloadKwToken {
+impl AstNode for NumberKwToken {
     type Language = crate::syntax::WebVTT;
     fn can_cast(kind: SyntaxKind) -> bool
     where
         Self: Sized,
     {
-        kind == SyntaxKind::PAYLOAD_KW
+        kind == SyntaxKind::NUMBER_KW
     }
     fn cast(node: SyntaxNode) -> Option<Self>
     where
         Self: Sized,
     {
-        if PayloadKwToken::can_cast(node.kind()) {
-            Some(PayloadKwToken(node))
+        if NumberKwToken::can_cast(node.kind()) {
+            Some(NumberKwToken(node))
         } else {
             None
         }
@@ -750,41 +895,6 @@ impl AstNode for StyleKwToken {
         Self: Sized,
     {
         if StyleKwToken::can_cast(node.kind()) { Some(StyleKwToken(node)) } else { None }
-    }
-    fn syntax(&self) -> &SyntaxNode {
-        &self.0
-    }
-}
-///The [`SyntaxKind::TIMESTAMP`] token (`timestamp`).
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct TimestampToken(SyntaxNode);
-impl TimestampToken {
-    /// Get the underlying [`SyntaxToken`].
-    pub fn token(&self) -> SyntaxToken {
-        self.0
-            .children_with_tokens()
-            .filter_map(|element| element.into_token())
-            .find(|token| token.kind() == SyntaxKind::TIMESTAMP)
-            .unwrap()
-    }
-}
-impl AstNode for TimestampToken {
-    type Language = crate::syntax::WebVTT;
-    fn can_cast(kind: SyntaxKind) -> bool
-    where
-        Self: Sized,
-    {
-        kind == SyntaxKind::TIMESTAMP
-    }
-    fn cast(node: SyntaxNode) -> Option<Self>
-    where
-        Self: Sized,
-    {
-        if TimestampToken::can_cast(node.kind()) {
-            Some(TimestampToken(node))
-        } else {
-            None
-        }
     }
     fn syntax(&self) -> &SyntaxNode {
         &self.0

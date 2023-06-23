@@ -1,4 +1,4 @@
-SourceFile = Magic HeaderItems* Items*
+SourceFile = Magic 'newline' (HeaderItems 'newline')* (Items 'newline')*
 
 Magic = 'WEBVTT'
 
@@ -6,14 +6,16 @@ HeaderItems = RegionDefinition | Style | CommentBlock
 
 Items = Cue | CommentBlock
 
-CommentBlock = 'NOTE' 'comment'
+CommentBlock = 'NOTE' ('line' 'newline')*
 
 RegionDefinition = 'REGION'
 
 Style = 'STYLE'
 
-Cue = 'identifier'? Timings CuePayload
+Cue = ('identifier' 'newline')? Timings 'newline' CuePayload
 
-Timings = 'timestamp' '-->' 'timestamp'
+Timings = Timestamp '-->' Timestamp
 
-CuePayload = 'payload'
+CuePayload = ('line' 'newline')*
+
+Timestamp = 'number' ':' 'number' ':' 'number' '.' 'number'

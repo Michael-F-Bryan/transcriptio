@@ -2,8 +2,10 @@
 pub mod ast;
 #[rustfmt::skip]
 mod syntax_kind;
+mod hand_written;
+mod lexer;
 
-pub use self::syntax_kind::SyntaxKind;
+pub use self::{lexer::tokenize, syntax_kind::SyntaxKind};
 
 /// A tag type used by [`rowan`] to represent the WebVTT language.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]

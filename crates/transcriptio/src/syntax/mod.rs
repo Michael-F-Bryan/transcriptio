@@ -1,4 +1,6 @@
+#[rustfmt::skip]
 pub mod ast;
+#[rustfmt::skip]
 mod syntax_kind;
 
 pub use self::syntax_kind::SyntaxKind;

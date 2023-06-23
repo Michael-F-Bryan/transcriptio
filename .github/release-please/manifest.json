@@ -1,6 +1,6 @@
 {
   ".": "0.0.0",
-  "crates/transcriptio": "0.1.0",
-  "integration-tests": "0.0.1",
-  "crates/transcriptio-cli": "0.1.0"
+  "crates/transcriptio": "0.2.0",
+  "integration-tests": "0.0.2",
+  "crates/transcriptio-cli": "0.2.0"
 }

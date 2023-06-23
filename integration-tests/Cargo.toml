@@ -1,6 +1,6 @@
 [package]
 name = "transcriptio-integration-tests"
-version = "0.0.1"
+version = "0.0.2"
 publish = false
 authors.workspace = true
 edition.workspace = true
@@ -16,7 +16,7 @@ rust-version.workspace = true
 anyhow = "1.0.71"
 libtest-mimic = "0.6.0"
 tracing = "0.1.37"
-transcriptio = { version = "0.1.0", path = "../crates/transcriptio" }
+transcriptio = { version = "0.2.0", path = "../crates/transcriptio" }
 walkdir = "2.3.3"
 
 [dev-dependencies]

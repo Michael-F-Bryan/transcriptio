@@ -7,10 +7,6 @@ on:
     tags: "*"
   repository_dispatch:
 
-permissions:
-  contents: write
-  pull-requests: write
-
 env:
   DEFAULT_CRATE_NAME: transcriptio
   RUST_BACKTRACE: 1
@@ -26,7 +22,7 @@ jobs:
         run: |
           release-please release-pr \
             --debug \
-            --token=${{ secrets.GITHUB_TOKEN }} \
+            --token=${{ secrets.RELEASE_PLEASE_GH_TOKEN }} \
             --repo-url=${{ github.repositoryUrl }} \
             --config-file=.github/release-please/config.json \
             --manifest-file=.github/release-please/manifest.json
@@ -34,7 +30,7 @@ jobs:
         run: |
           release-please github-release \
             --debug \
-            --token=${{ secrets.GITHUB_TOKEN }} \
+            --token=${{ secrets.RELEASE_PLEASE_GH_TOKEN }} \
             --repo-url=${{ github.repositoryUrl }} \
             --config-file=.github/release-please/config.json \
             --manifest-file=.github/release-please/manifest.json
@@ -65,5 +61,5 @@ jobs:
         run:
           gh release upload ${TAG_NAME#refs/tags/} ./target/transcriptio.*.zip
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.RELEASE_PLEASE_GH_TOKEN }}
           TAG_NAME: ${{ github.ref }}

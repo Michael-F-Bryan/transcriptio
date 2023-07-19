@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["ensure_file_contents","format_rust","project_root"],"mod":["syntax"]};

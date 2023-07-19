@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/Michael-F-Bryan/transcriptio/compare/cli-v0.1.0...cli-v0.2.0) (2023-07-19)
+
+
+### Features
+
+* **cli:** Stubbed out a parse command ([41d1d83](https://github.com/Michael-F-Bryan/transcriptio/commit/41d1d830bac6ff829255bd327bf006aedd43d52c))
+
 ## 0.1.0 (2023-06-22)
 
 

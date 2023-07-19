@@ -1,4 +1,4 @@
-use crate::syntax::{SyntaxKind, SyntaxKind::*};
+use crate::syntax::SyntaxKind;
 
 /// Split the input text into its tokens.
 ///
@@ -13,6 +13,7 @@ pub fn tokenize(_input: &str) -> impl Iterator<Item = (SyntaxKind, &'_ str)> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::syntax::SyntaxKind::*;
 
     #[test]
     #[ignore = "TODO: Implement the lexer"]
